@@ -125,9 +125,9 @@ void loop()
 
   for(i=0; i< NUM_CHANNELS; i++){
     if (dmx_data[i] == 255)         // 255 means ON !
-      output_pins[i] = HIGH;   
+      digitalWrite(output_pins[i], HIGH);   
     else
-      output_pins[i] = LOW;         // else OFF !
+      digitalWrite(output_pins[i], LOW);         // else OFF !
   }
 
 }
