@@ -63,7 +63,7 @@ void setup()
   unsigned char val=0;
 
   // Console port
-  Serial.begin(57600);
+  Serial.begin(9600);
   Serial.write("setup() ...\n");  
 
                
@@ -112,23 +112,29 @@ void setup()
 
 void loop()
 {
-  int i;
 
-  Serial.write("DMX Channels: ");
-  for(i=0; i< NUM_CHANNELS; i++){
-    Serial.print(i);
-    Serial.write("=");
-    Serial.print(dmx_data[i]);
-    Serial.write(" ");
-  }
-  Serial.write("\n");
-
-  for(i=0; i< NUM_CHANNELS; i++){
-    if (dmx_data[i] == 255)         // 255 means ON !
-      digitalWrite(output_pins[i], HIGH);   
-    else
-      digitalWrite(output_pins[i], LOW);         // else OFF !
-  }
+  switch (dmx_data[0]) {
+      case 0:
+        Serial.write("Invoking Look 0 (Black)\n");
+        break;
+      case 1:
+        Serial.write("Invoking Look 1\n");
+        break;
+      case 2:
+        Serial.write("Invoking Look 2\n");
+        break;
+      case 3:
+        Serial.write("Invoking Look 3\n");
+        break;
+      case 4:
+        Serial.write("Invoking Look 4\n");
+        break;
+      default:
+        Serial.write("DMX value = ");
+        Serial.print(dmx_data[0]);
+        Serial.write(" - Invoking Look 255\n");
+        break;
+    }
 
 }
 
