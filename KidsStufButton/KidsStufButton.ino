@@ -151,7 +151,7 @@ void loop()
 
       case 7:
         Serial.write("Invoking Look 4\n");
-        colorWipe(strip.Color(255, 255, 255), 50); // White
+        colorWipe(strip.Color(255, 255, 255), 50); // White 50 ms
         break;
         
       default:
