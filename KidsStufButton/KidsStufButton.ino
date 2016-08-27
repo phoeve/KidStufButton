@@ -148,6 +148,11 @@ void loop()
         rainbowCycle(50)
         break;
         
+      case 5:
+        Serial.write("Invoking Look 4\n");
+        theaterChaseRainbow(50)
+        break;
+        
       case 11:
         Serial.write("Invoking Look 1\n");
         theaterChase(strip.Color(251, 0, 0), 50); // Vinny (Red)
