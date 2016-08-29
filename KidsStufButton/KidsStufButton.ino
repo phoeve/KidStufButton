@@ -121,7 +121,7 @@ void loop()
         
       case 1:
         Serial.write("Invoking Look 1\n");
-        theaterChase(strip.Color(127, 127, 127), 50); // White
+        theaterChase(strip.Color(127, 127, 127), 50); // White  R, G, B = 127;   50 miliseconds pause
         break;
         
       case 2:
