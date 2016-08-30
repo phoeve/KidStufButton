@@ -109,6 +109,15 @@ void setup()
   strip.show(); // Initialize all pixels to 'off'
 
 }
+//        (strip.Color(251, 0, 0), 50); // Vinny (Red)
+//        (strip.Color(240, 69, 0), 50); // Waldo (Orange)
+//        (strip.Color(253, 250, 1), 50); // Dr Von TakeOut (Yellow)
+//        (strip.Color(0, 142, 62), 50); // Klubhouse (Green)
+//        (strip.Color(53, 26, 226), 50); // Gordo (Blue)
+//        (strip.Color(255, 0, 166), 50); // Cammie (Pink)
+//        (strip.Color(255, 0, 255), 50); // Sam (Purple)
+//        (strip.Color(0, 0, 0), 50); // Black
+//        (strip.Color(255, 255, 255), 50); // White
 
 
 void loop()
@@ -125,35 +134,95 @@ void loop()
         break;
         
       case 2:
-        Serial.write("Invoking Look 2\n");
-        theaterChase(strip.Color(127, 0, 0), 50); // Red
+        Serial.write("Invoking Look 4\n");
+        colorWipe(strip.Color(255, 255, 255), 50); // White 50 ms
         break;
         
       case 3:
-        Serial.write("Invoking Look 3\n");
-        theaterChase(strip.Color(0, 0, 127), 50); // Blue
+        Serial.write("Invoking Look 4\n");
+        rainbow(50)
         break;
         
       case 4:
         Serial.write("Invoking Look 4\n");
-        colorWipe(strip.Color(255, 0, 0), 50); // Red
-        break;
-
-      case 5:
-        Serial.write("Invoking Look 4\n");
-        colorWipe(strip.Color(0, 255, 0), 50); // Green
-        break;
-
-      case 6:
-        Serial.write("Invoking Look 4\n");
-        colorWipe(strip.Color(0, 0, 255), 50); // Blue
-        break;
-
-      case 7:
-        Serial.write("Invoking Look 4\n");
-        colorWipe(strip.Color(255, 255, 255), 50); // White
+        rainbowCycle(50)
         break;
         
+      case 5:
+        Serial.write("Invoking Look 4\n");
+        theaterChaseRainbow(50)
+        break;
+        
+      case 11:
+        Serial.write("Invoking Look 1\n");
+        theaterChase(strip.Color(251, 0, 0), 50); // Vinny (Red)
+        break;
+        
+      case 12:
+        Serial.write("Invoking Look 4\n");
+        colorWipe(strip.Color(251, 0, 0), 50); // Vinny (Red)
+        break;
+
+      case 21:
+        Serial.write("Invoking Look 2\n");
+        theaterChase(strip.Color(240, 69, 0), 50); // Waldo (Orange)
+        break;
+        
+      case 22:
+        Serial.write("Invoking Look 4\n");
+        colorWipe(strip.Color(240, 69, 0), 50); // Waldo (Orange)
+        break;
+
+      case 31:
+        Serial.write("Invoking Look 3\n");
+        theaterChase(strip.Color(253, 250, 1), 50); // Dr Von TakeOut (Yellow)
+        break;
+        
+      case 32:
+        Serial.write("Invoking Look 4\n");
+        colorWipe(strip.Color(253, 250, 1), 50); // Dr Von TakeOut (Yellow)
+        break;
+
+      case 41:
+        Serial.write("Invoking Look 1\n");
+        theaterChase(strip.Color(0, 142, 62), 50); // Klubhouse (Green)
+        break;
+        
+      case 42:
+        Serial.write("Invoking Look 4\n");
+        colorWipe(strip.Color(0, 142, 62), 50); // Klubhouse (Green)
+        break;
+
+      case 51:
+        Serial.write("Invoking Look 1\n");
+        theaterChase(strip.Color(53, 26, 226), 50); // Gordo (Blue)
+        break;
+        
+      case 52:
+        Serial.write("Invoking Look 4\n");
+        colorWipe(strip.Color(53, 26, 226), 50); // Gordo (Blue)
+        break;
+
+      case 61:
+        Serial.write("Invoking Look 1\n");
+        theaterChase(strip.Color(255, 0, 166), 50); // Cammie (Pink)
+        break;
+        
+      case 62:
+        Serial.write("Invoking Look 4\n");
+        colorWipe(strip.Color(255, 0, 166), 50); // Cammie (Pink)
+        break;
+
+      case 71:
+        Serial.write("Invoking Look 1\n");
+        theaterChase(strip.Color(255, 0, 255), 50); // Sam (Purple)
+        break;
+        
+      case 72:
+        Serial.write("Invoking Look 4\n");
+        colorWipe(strip.Color(255, 0, 255), 50); // Sam (Purple)
+        break;
+
       default:
         Serial.write("DMX value = ");
         Serial.print(dmx_data[0]);
