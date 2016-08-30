@@ -359,7 +359,7 @@ ISR(USART3_RX_vect)
         chan_cnt = 0;
         
         if (dmx_data[chan_cnt] != data)       // Allow code to know when changed data occurs
-          dmx_unchanged = true;
+          dmx_unchanged = false;
           
         dmx_data[chan_cnt++] = data;
         dmx_state = DMX_RUN;
@@ -368,7 +368,7 @@ ISR(USART3_RX_vect)
     
     case DMX_RUN:
       if (dmx_data[chan_cnt] != data)       // Allow code to know when changed data occurs
-        dmx_unchanged = true;
+        dmx_unchanged = false;
             
       dmx_data[chan_cnt++] = data;
       if (chan_cnt >= NUM_CHANNELS)
