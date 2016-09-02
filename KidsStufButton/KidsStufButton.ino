@@ -62,6 +62,8 @@ unsigned int address_pins[NUM_ADDRESS_BITS] = {50,48,46,44,42,40,38,36,34};
 //unsigned int address_pins[NUM_ADDRESS_BITS] = {53,51,49,47,45,43,41,39,37};
 unsigned int myBaseAddress = 0;
 
+boolean dmx_unchanged = true;
+
 
 //===============================================================================================================
 
@@ -130,12 +132,15 @@ void loop()
     Serial.print(dmx_data[0]);
     Serial.write("\n");
 
+  dmx_unchanged = true;
+
   switch (dmx_data[0]) {
       case 0:
 //        Serial.write("Invoking Look 0 (Black)\n");
         break;
         
       case 1:
+
         Serial.write("Look 1: White Chase");
         theaterChase(strip.Color(255, 255, 255), 50); // White
         break;
@@ -146,6 +151,7 @@ void loop()
         break;
         
       case 3:
+
         Serial.write("Look 3: Rainbow");
         rainbow(10);
         break;
@@ -241,7 +247,7 @@ void loop()
 
 // Fill the dots one after the other with a color
 void colorWipe(uint32_t c, uint8_t wait) {
-  for(uint16_t i=0; i<strip.numPixels(); i++) {
+  for(uint16_t i=0; i<strip.numPixels() && dmx_unchanged; i++) {
     strip.setPixelColor(i, c);
     strip.show();
     delay(wait);
@@ -251,7 +257,7 @@ void colorWipe(uint32_t c, uint8_t wait) {
 void rainbow(uint8_t wait) {
   uint16_t i, j;
 
-  for(j=0; j<256; j++) {
+  for(j=0; j<256 && dmx_unchanged; j++) {
     for(i=0; i<strip.numPixels(); i++) {
       strip.setPixelColor(i, Wheel((i+j) & 255));
     }
@@ -264,7 +270,7 @@ void rainbow(uint8_t wait) {
 void rainbowCycle(uint8_t wait) {
   uint16_t i, j;
 
-  for(j=0; j<256*5; j++) { // 5 cycles of all colors on wheel
+  for(j=0; j<256*5 && dmx_unchanged; j++) { // 5 cycles of all colors on wheel
     for(i=0; i< strip.numPixels(); i++) {
       strip.setPixelColor(i, Wheel(((i * 256 / strip.numPixels()) + j) & 255));
     }
@@ -275,8 +281,8 @@ void rainbowCycle(uint8_t wait) {
 
 //Theatre-style crawling lights.
 void theaterChase(uint32_t c, uint8_t wait) {
-  for (int j=0; j<10; j++) {  //do 10 cycles of chasing
-    for (int q=0; q < 3; q++) {
+  for (int j=0; j<10 && dmx_unchanged; j++) {  //do 10 cycles of chasing
+    for (int q=0; q < 3 && dmx_unchanged; q++) {
       for (uint16_t i=0; i < strip.numPixels(); i=i+3) {
         strip.setPixelColor(i+q, c);    //turn every third pixel on
       }
@@ -293,8 +299,8 @@ void theaterChase(uint32_t c, uint8_t wait) {
 
 //Theatre-style crawling lights with rainbow effect
 void theaterChaseRainbow(uint8_t wait) {
-  for (int j=0; j < 256; j++) {     // cycle all 256 colors in the wheel
-    for (int q=0; q < 3; q++) {
+  for (int j=0; j < 256 && dmx_unchanged; j++) {     // cycle all 256 colors in the wheel
+    for (int q=0; q < 3 && dmx_unchanged; q++) {
       for (uint16_t i=0; i < strip.numPixels(); i=i+3) {
         strip.setPixelColor(i+q, Wheel( (i+j) % 255));    //turn every third pixel on
       }
@@ -361,12 +367,19 @@ ISR(USART3_RX_vect)
       if (dmx_addr == dmx_start_addr)
       {
         chan_cnt = 0;
+        
+        if (dmx_data[chan_cnt] != data)       // Allow code to know when changed data occurs
+          dmx_unchanged = false;
+          
         dmx_data[chan_cnt++] = data;
         dmx_state = DMX_RUN;
       }
     break;
     
     case DMX_RUN:
+      if (dmx_data[chan_cnt] != data)       // Allow code to know when changed data occurs
+        dmx_unchanged = false;
+            
       dmx_data[chan_cnt++] = data;
       if (chan_cnt >= NUM_CHANNELS)
       {
