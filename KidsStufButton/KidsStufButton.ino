@@ -56,12 +56,9 @@ boolean dmx_same;
      
 #define DIP_ON LOW             // If voltage is LOW (grounded), the dip switch is in the ON position.  
 #define NUM_ADDRESS_BITS 9     // 2**9 gives 0-511
-//unsigned int address_pins[NUM_ADDRESS_BITS] = {48,46,44,42,40,38,36,34,32};
-//unsigned int address_pins[NUM_ADDRESS_BITS] = {49,47,45,43,41,40,38,36,34};
+
 unsigned int address_pins[NUM_ADDRESS_BITS] = {50,48,46,44,42,40,38,36,34};
-//unsigned int address_pins[NUM_ADDRESS_BITS] = {51,49,47,45,43,41,39,37,35};
-//unsigned int address_pins[NUM_ADDRESS_BITS] = {52,50,48,46,44,42,40,38,36};
-//unsigned int address_pins[NUM_ADDRESS_BITS] = {53,51,49,47,45,43,41,39,37};
+
 unsigned int myBaseAddress = 0;
 
 
@@ -95,9 +92,6 @@ void setup()
   
   Serial.write("myBaseAddress is ");
   Serial.print(myBaseAddress);
-  Serial.write("\n");
-  Serial.write("dmx_start_addr is ");
-  Serial.print(dmx_start_addr);
   Serial.write("\n");
 
 
@@ -134,9 +128,6 @@ void loop()
   dmx_same = true;
 
   switch (dmx_data[0]) {
-      case 0:
-//        Serial.write("Invoking Look 0 (Black)\n");
-        break;
         
       case 1:
 
@@ -186,53 +177,63 @@ void loop()
         break;
 
       case 31:
-        Serial.write("Look 31: Yellow Chase");
+        Serial.write("Look 31: Yellow Chase\n");
         theaterChase(strip.Color(205, 105, 0), 50); // Dr Von TakeOut (Yellow)
         break;
         
       case 32:
-        Serial.write("Look 32: Yellow Solid");
+        Serial.write("Look 32: Yellow Solid\n");
         colorWipe(strip.Color(205, 105, 0), 30); // Dr Von TakeOut (Yellow)
         break;
 
       case 41:
-        Serial.write("Look 41: Green Chase");
+        Serial.write("Look 41: Green Chase\n");
         theaterChase(strip.Color(0, 255, 0), 50); // Klubhouse (Green)
         break;
         
       case 42:
-        Serial.write("Look 42: Green Solid");
+        Serial.write("Look 42: Green Solid\n");
         colorWipe(strip.Color(0, 255, 0), 30); // Klubhouse (Green)
         break;
 
       case 51:
-        Serial.write("Look 51: Blue Chase");
+        Serial.write("Look 51: Blue Chase\n");
         theaterChase(strip.Color(0, 0, 255), 50); // Gordo (Blue)
         break;
         
       case 52:
-        Serial.write("Look 52: Blue Solid");
+        Serial.write("Look 52: Blue Solid\n");
         colorWipe(strip.Color(0, 0, 255), 30); // Gordo (Blue)
         break;
 
       case 61:
-        Serial.write("Look 61: Pink Chase");
+        Serial.write("Look 61: Pink Chase\n");
         theaterChase(strip.Color(255, 10, 100), 50); // Cammie (Pink)
         break;
         
       case 62:
-        Serial.write("Look 62: Pink Solid");
+        Serial.write("Look 62: Pink Solid\n");
         colorWipe(strip.Color(255, 10, 100), 30); // Cammie (Pink)
         break;
 
       case 71:
-        Serial.write("Look 71: Purple Chase");
+        Serial.write("Look 71: Purple Chase\n");
         theaterChase(strip.Color(255, 0, 255), 50); // Sam (Purple)
         break;
         
       case 72:
-        Serial.write("Look 72: Purple Solid");
+        Serial.write("Look 72: Purple Solid\n");
         colorWipe(strip.Color(255, 0, 255), 30); // Sam (Purple)
+        break;
+
+      case 90:
+        Serial.write("Look 90: Diff colored rings draw\n");
+        diffRingsDraw(strip.Color(255, 0, 0), strip.Color(0, 255, 0), strip.Color(0, 0, 255), strip.Color(255, 255, 255), 30); // R, G, B, W :)
+        break;
+
+      case 91:
+        Serial.write("Look 90: Diff colored rings\n");
+        diffRings(strip.Color(255, 0, 0), strip.Color(0, 255, 0), strip.Color(0, 0, 255), strip.Color(255, 255, 255)); // R, G, B, W :)
         break;
       
       case 254:
@@ -247,6 +248,37 @@ void loop()
     }
 
 }
+
+
+void diffRingsDraw(uint32_t c1, uint32_t c2, uint32_t c3, uint32_t c4, uint8_t wait) {
+  for(uint16_t i=0; i<strip.numPixels() && dmx_same; i++) {
+    if (i<12)
+      strip.setPixelColor(i, c1);   // ring 1
+    else if (i<24)
+      strip.setPixelColor(i, c2);
+    else if (i<36)
+      strip.setPixelColor(i, c3);
+    else if (i<48)
+      strip.setPixelColor(i, c4);   // ring 4
+    strip.show();
+    delay(wait);
+  }
+}
+
+void diffRings(uint32_t c1, uint32_t c2, uint32_t c3, uint32_t c4) {
+  for(uint16_t i=0; i<strip.numPixels() && dmx_same; i++) {
+    if (i<12)
+      strip.setPixelColor(i, c1);   // ring 1
+    else if (i<24)
+      strip.setPixelColor(i, c2);
+    else if (i<36)
+      strip.setPixelColor(i, c3);
+    else if (i<48)
+      strip.setPixelColor(i, c4);   // ring 4 
+  }
+  strip.show();
+}
+
 
 // Fill the dots one after the other with a color
 void colorWipe(uint32_t c, uint8_t wait) {
@@ -373,9 +405,9 @@ ISR(USART3_RX_vect)
 
 
         if (data && data <100){
-          Serial.write("data is ");
+          Serial.write("new data is ");
           Serial.print(data);
-          Serial.write(" - ");
+          Serial.write(" - old is ");
           Serial.print(dmx_data[chan_cnt]);
           Serial.write("\n");
           if (dmx_data[chan_cnt] != data && dmx_data[chan_cnt]){      
