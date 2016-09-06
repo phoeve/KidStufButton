@@ -192,7 +192,7 @@ void loop()
         
       case 32:
         Serial.write("Look 32: Yellow Solid");
-        colorWipe(strip.Color(205, 105, 0), 10); // Dr Von TakeOut (Yellow)
+        colorWipe(strip.Color(205, 105, 0), 30); // Dr Von TakeOut (Yellow)
         break;
 
       case 41:
