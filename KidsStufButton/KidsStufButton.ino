@@ -50,6 +50,8 @@ unsigned char dmx_data[NUM_CHANNELS];
       // tell us when to update the pins
 volatile unsigned char update;    
 
+boolean dmx_same; 
+
 
      
 #define DIP_ON LOW             // If voltage is LOW (grounded), the dip switch is in the ON position.  
@@ -62,7 +64,6 @@ unsigned int address_pins[NUM_ADDRESS_BITS] = {50,48,46,44,42,40,38,36,34};
 //unsigned int address_pins[NUM_ADDRESS_BITS] = {53,51,49,47,45,43,41,39,37};
 unsigned int myBaseAddress = 0;
 
-boolean dmx_unchanged = true;
 
 
 //===============================================================================================================
@@ -129,10 +130,8 @@ void setup()
 
 void loop()
 {
-    Serial.print(dmx_data[0]);
-    Serial.write("\n");
 
-  dmx_unchanged = true;
+  dmx_same = true;
 
   switch (dmx_data[0]) {
       case 0:
@@ -141,49 +140,49 @@ void loop()
         
       case 1:
 
-        Serial.write("Look 1: White Chase");
+        Serial.write("Look 1: White Chase\n");
         theaterChase(strip.Color(255, 255, 255), 50); // White
         break;
         
       case 2:
-        Serial.write("Look 2: White Solid");
+        Serial.write("Look 2: White Solid\n");
         colorWipe(strip.Color(255, 255, 255), 30); // White 50 ms
         break;
         
       case 3:
 
-        Serial.write("Look 3: Rainbow");
-        rainbow(10);
+        Serial.write("Look 3: Rainbow\n");
+        rainbow(50);
         break;
         
       case 4:
-        Serial.write("Look 4: RainbowCycle");
-        rainbowCycle(10);
+        Serial.write("Look 4: RainbowCycle\n");
+        rainbowCycle(50);
         break;
         
       case 5:
-        Serial.write("Look 5: Rainbow Chase");
-        theaterChaseRainbow(10);
+        Serial.write("Look 5: Rainbow Chase\n");
+        theaterChaseRainbow(50);
         break;
         
       case 11:
-        Serial.write("Look 11: Red Chase");
+        Serial.write("Look 11: Red Chase\n");
         theaterChase(strip.Color(255, 0, 0), 50); // Vinny (Red)
         break;
         
       case 12:
-        Serial.write("Look 12: Red Solid");
-        colorWipe(strip.Color(255, 0, 0), 10); // Vinny (Red)
+        Serial.write("Look 12: Red Solid\n");
+        colorWipe(strip.Color(255, 0, 0), 30); // Vinny (Red)
         break;
 
       case 21:
-        Serial.write("Look 21: Orange Chase");
+        Serial.write("Look 21: Orange Chase\n");
         theaterChase(strip.Color(255, 50, 0), 50); // Waldo (Orange)
         break;
         
       case 22:
-        Serial.write("Look 22: Orange Solid");
-        colorWipe(strip.Color(255, 50, 0), 10); // Waldo (Orange)
+        Serial.write("Look 22: Orange Solid\n");
+        colorWipe(strip.Color(255, 50, 0), 30); // Waldo (Orange)
         break;
 
       case 31:
@@ -203,7 +202,7 @@ void loop()
         
       case 42:
         Serial.write("Look 42: Green Solid");
-        colorWipe(strip.Color(0, 255, 0), 10); // Klubhouse (Green)
+        colorWipe(strip.Color(0, 255, 0), 30); // Klubhouse (Green)
         break;
 
       case 51:
@@ -213,7 +212,7 @@ void loop()
         
       case 52:
         Serial.write("Look 52: Blue Solid");
-        colorWipe(strip.Color(0, 0, 255), 10); // Gordo (Blue)
+        colorWipe(strip.Color(0, 0, 255), 30); // Gordo (Blue)
         break;
 
       case 61:
@@ -223,7 +222,7 @@ void loop()
         
       case 62:
         Serial.write("Look 62: Pink Solid");
-        colorWipe(strip.Color(255, 10, 100), 10); // Cammie (Pink)
+        colorWipe(strip.Color(255, 10, 100), 30); // Cammie (Pink)
         break;
 
       case 71:
@@ -233,13 +232,17 @@ void loop()
         
       case 72:
         Serial.write("Look 72: Purple Solid");
-        colorWipe(strip.Color(255, 0, 255), 10); // Sam (Purple)
+        colorWipe(strip.Color(255, 0, 255), 30); // Sam (Purple)
         break;
-
+      
+      case 254:
+        Serial.write("Look 254: Red Black");
+        colorWipe(strip.Color(0, 0, 0), 30); // Vinny (Red)
+        break;
+      
       default:
-        Serial.write("DMX value = ");
-        Serial.print(dmx_data[0]);
-        Serial.write(" - Invoking Look 255\n");
+        Serial.write("Undefined Look\n");
+        colorWipe(strip.Color(0, 0, 0), 30); 
         break;
     }
 
@@ -247,7 +250,7 @@ void loop()
 
 // Fill the dots one after the other with a color
 void colorWipe(uint32_t c, uint8_t wait) {
-  for(uint16_t i=0; i<strip.numPixels() && dmx_unchanged; i++) {
+  for(uint16_t i=0; i<strip.numPixels() && dmx_same; i++) {
     strip.setPixelColor(i, c);
     strip.show();
     delay(wait);
@@ -257,7 +260,7 @@ void colorWipe(uint32_t c, uint8_t wait) {
 void rainbow(uint8_t wait) {
   uint16_t i, j;
 
-  for(j=0; j<256 && dmx_unchanged; j++) {
+  for(j=0; j<256 && dmx_same; j++) {
     for(i=0; i<strip.numPixels(); i++) {
       strip.setPixelColor(i, Wheel((i+j) & 255));
     }
@@ -270,7 +273,7 @@ void rainbow(uint8_t wait) {
 void rainbowCycle(uint8_t wait) {
   uint16_t i, j;
 
-  for(j=0; j<256*5 && dmx_unchanged; j++) { // 5 cycles of all colors on wheel
+  for(j=0; j<256*5 && dmx_same; j++) { // 5 cycles of all colors on wheel
     for(i=0; i< strip.numPixels(); i++) {
       strip.setPixelColor(i, Wheel(((i * 256 / strip.numPixels()) + j) & 255));
     }
@@ -281,8 +284,8 @@ void rainbowCycle(uint8_t wait) {
 
 //Theatre-style crawling lights.
 void theaterChase(uint32_t c, uint8_t wait) {
-  for (int j=0; j<10 && dmx_unchanged; j++) {  //do 10 cycles of chasing
-    for (int q=0; q < 3 && dmx_unchanged; q++) {
+  for (int j=0; j<10 && dmx_same; j++) {  //do 10 cycles of chasing
+    for (int q=0; q < 3 && dmx_same; q++) {
       for (uint16_t i=0; i < strip.numPixels(); i=i+3) {
         strip.setPixelColor(i+q, c);    //turn every third pixel on
       }
@@ -299,8 +302,8 @@ void theaterChase(uint32_t c, uint8_t wait) {
 
 //Theatre-style crawling lights with rainbow effect
 void theaterChaseRainbow(uint8_t wait) {
-  for (int j=0; j < 256 && dmx_unchanged; j++) {     // cycle all 256 colors in the wheel
-    for (int q=0; q < 3 && dmx_unchanged; q++) {
+  for (int j=0; j < 256 && dmx_same; j++) {     // cycle all 256 colors in the wheel
+    for (int q=0; q < 3 && dmx_same; q++) {
       for (uint16_t i=0; i < strip.numPixels(); i=i+3) {
         strip.setPixelColor(i+q, Wheel( (i+j) % 255));    //turn every third pixel on
       }
@@ -367,20 +370,31 @@ ISR(USART3_RX_vect)
       if (dmx_addr == dmx_start_addr)
       {
         chan_cnt = 0;
-        
-        //if (dmx_data[chan_cnt] != data)       // Allow code to know when changed data occurs
-        //  dmx_unchanged = false;
+
+
+        if (data && data <100){
+          Serial.write("data is ");
+          Serial.print(data);
+          Serial.write(" - ");
+          Serial.print(dmx_data[chan_cnt]);
+          Serial.write("\n");
+          if (dmx_data[chan_cnt] != data && dmx_data[chan_cnt]){      
+            dmx_same = false;
+            Serial.write("********* dmx_same =>false\n");
+          }
+  
+          dmx_data[chan_cnt] = data;
+        }
+        chan_cnt++;
+       
           
-        dmx_data[chan_cnt++] = data;
         dmx_state = DMX_RUN;
       }
     break;
     
     case DMX_RUN:
-      //if (dmx_data[chan_cnt] != data)       // Allow code to know when changed data occurs
-        //dmx_unchanged = false;
             
-      dmx_data[chan_cnt++] = data;
+      //dmx_data[chan_cnt++] = data;
       if (chan_cnt >= NUM_CHANNELS)
       {
         dmx_state = DMX_IDLE;
