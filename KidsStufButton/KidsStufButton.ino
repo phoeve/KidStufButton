@@ -168,12 +168,12 @@ void loop()
 
       case 21:
         Serial.write("Look 21: Orange Chase\n");
-        theaterChase(strip.Color(255, 50, 0), 50); // Waldo (Orange)
+        theaterChase(strip.Color(255, 60, 0), 50); // Waldo (Orange)
         break;
         
       case 22:
         Serial.write("Look 22: Orange Solid\n");
-        colorWipe(strip.Color(255, 50, 0), 30); // Waldo (Orange)
+        colorWipe(strip.Color(255, 60, 0), 30); // Waldo (Orange)
         break;
 
       case 31:
@@ -218,22 +218,27 @@ void loop()
 
       case 71:
         Serial.write("Look 71: Purple Chase\n");
-        theaterChase(strip.Color(255, 0, 255), 50); // Sam (Purple)
+        theaterChase(strip.Color(75, 0, 255), 50); // Sam (Purple)
         break;
         
       case 72:
         Serial.write("Look 72: Purple Solid\n");
-        colorWipe(strip.Color(255, 0, 255), 30); // Sam (Purple)
-        break;
-
-      case 90:
-        Serial.write("Look 90: Diff colored rings draw\n");
-        diffRingsDraw(strip.Color(255, 0, 0), strip.Color(0, 255, 0), strip.Color(0, 0, 255), strip.Color(255, 255, 255), 30); // R, G, B, W :)
+        colorWipe(strip.Color(75, 0, 255), 30); // Sam (Purple)
         break;
 
       case 91:
+        Serial.write("Look 90: Diff colored rings draw\n");
+        diffRingsChase(strip.Color(150, 0, 0), strip.Color(75, 0, 255), strip.Color(0, 0, 150), strip.Color(150, 10, 100), 30); // R, G, B, W :)
+        break;
+
+      case 92:
+        Serial.write("Look 90: Diff colored rings draw\n");
+        diffRingsDraw(strip.Color(150, 0, 0), strip.Color(75, 0, 255), strip.Color(0, 0, 150), strip.Color(150, 10, 100), 30); // R, G, B, W :)
+        break;
+
+      case 93:
         Serial.write("Look 90: Diff colored rings\n");
-        diffRings(strip.Color(255, 0, 0), strip.Color(0, 255, 0), strip.Color(0, 0, 255), strip.Color(255, 255, 255)); // R, G, B, W :)
+        diffRings(strip.Color(150, 0, 0), strip.Color(75, 0, 255), strip.Color(0, 0, 150), strip.Color(150, 10, 100)); // R, G, B, W :)
         break;
       
       case 254:
@@ -243,12 +248,32 @@ void loop()
       
       default:
         Serial.write("Undefined Look\n");
+        Serial.print(dmx_data[0]);
         colorWipe(strip.Color(0, 0, 0), 30); 
         break;
     }
 
 }
 
+
+void diffRingsChase(uint32_t c1, uint32_t c2, uint32_t c3, uint32_t c4, uint8_t wait) {
+  for(uint16_t i=0; i<strip.numPixels() && dmx_same; i++) {
+    if (i<12)
+      strip.setPixelColor(i, c1);   // ring 1
+    else if (i<24)
+      strip.setPixelColor(i, c2);
+    else if (i<36)
+      strip.setPixelColor(i, c3);
+    else if (i<48)
+      strip.setPixelColor(i, c4);   // ring 4
+
+    for (uint16_t i=0; i < strip.numPixels(); i=i+3) {
+        strip.setPixelColor(i, 0);        //turn every third pixel off
+    }
+    strip.show();
+    delay(wait);
+  }
+}
 
 void diffRingsDraw(uint32_t c1, uint32_t c2, uint32_t c3, uint32_t c4, uint8_t wait) {
   for(uint16_t i=0; i<strip.numPixels() && dmx_same; i++) {
@@ -264,6 +289,7 @@ void diffRingsDraw(uint32_t c1, uint32_t c2, uint32_t c3, uint32_t c4, uint8_t w
     delay(wait);
   }
 }
+
 
 void diffRings(uint32_t c1, uint32_t c2, uint32_t c3, uint32_t c4) {
   for(uint16_t i=0; i<strip.numPixels() && dmx_same; i++) {
